@@ -1,0 +1,128 @@
+// botones
+
+#define pin_boton 34
+#define fdc_i 25
+#define fdc_d 26
+
+// leds
+#define giro_derecha 18
+#define giro_izquierda 19
+
+
+//defino los estados posibles
+enum estados {
+  CERRADO,
+  ABRIENDO,
+  ABIERTO,
+  CERRANDO,
+  PARADO,
+};
+
+//defino el estado inicial
+estados estado_actual = CERRADO;
+estados estado_anterior;
+int est_boton = 0;
+int est_fdc_i = 0;
+int est_fdc_d = 0;
+
+void setup() {
+  // codigo de inciacion, se ejecuta solo una vez
+  pinMode(pin_boton, INPUT);
+
+  pinMode(giro_izquierda, OUTPUT);
+  pinMode(giro_derecha, OUTPUT);
+
+  Serial.begin(115200);
+  Serial.println("Hello, ESP32!");
+}
+
+
+void loop() {
+
+  est_boton = digitalRead(pin_boton);
+  est_fdc_i = digitalRead(fdc_i);
+  est_fdc_d = digitalRead(fdc_d);
+
+
+  switch (estado_actual) {
+
+    case CERRADO:
+      // Código a ejecutar en CERRADO
+      digitalWrite(giro_izquierda, LOW);
+      digitalWrite(giro_derecha, LOW);
+      Serial.print(" CERRADO ");
+
+      //transiciones de estado
+      if (est_boton == 1) {
+        estado_actual = ABRIENDO;
+        delay(500);
+      }
+      break;
+
+    case ABRIENDO:
+      digitalWrite(giro_izquierda, LOW);
+      digitalWrite(giro_derecha, HIGH);
+      Serial.print(" ABRIENDO ");
+
+      //transiciones de estado
+      if (est_boton == 1) {
+        estado_actual = PARADO;
+        estado_anterior = ABRIENDO;
+        delay(500);
+      }
+      if (est_fdc_d == 1) {
+        estado_actual = ABIERTO;
+        delay(500);
+      }
+      break;
+
+    case PARADO:
+      digitalWrite(giro_izquierda, LOW);
+      digitalWrite(giro_derecha, LOW);
+      Serial.print(" PARADO ");
+      //transiciones de estado
+      if (est_boton == 1) {
+        if (estado_anterior == ABRIENDO) {
+          estado_actual = CERRANDO;
+        } else {
+          estado_actual = ABRIENDO;
+        }
+        delay(500);
+      }
+      break;
+
+
+    case ABIERTO:
+      digitalWrite(giro_izquierda, LOW);
+      digitalWrite(giro_derecha, LOW);
+      Serial.print(" ABIERTO ");
+      // Transiciones de estado
+      if (est_boton == 1) {
+        estado_actual = CERRANDO;
+        delay(500);
+      }
+      break;
+
+    case CERRANDO:
+      digitalWrite(giro_izquierda, HIGH);
+      digitalWrite(giro_derecha, LOW);
+      Serial.print(" CERRANDO ");
+      //Transiciones de estado
+      if (est_fdc_i == 1)
+      {
+        estado_actual = CERRADO;
+        delay(500);
+      }
+      if (est_boton == 1)
+      {
+        estado_actual = PARADO;
+        estado_anterior = CERRANDO;
+        delay(500);
+      }
+      break;
+
+
+
+  } delay(10);
+}
+
