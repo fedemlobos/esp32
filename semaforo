@@ -1,0 +1,94 @@
+// botones
+#define pin_arriba 35
+#define pin_abajo 34
+
+// leds
+#define pin_verde 17
+#define pin_amarillo 18
+#define pin_rojo 19
+
+
+//defino los estados posibles
+enum estados {
+  est_verde,
+  est_amarillo,
+  est_rojo
+};
+
+//defino el estado iniciall
+estados estado_actual = est_verde;
+int est_arriba=0; 
+int est_abajo=0;
+
+
+void setup() {
+  // codigo de inciacion, se ejecuta solo una vez
+  pinMode(pin_arriba, INPUT);
+  pinMode(pin_abajo, INPUT);
+
+  pinMode(pin_verde, OUTPUT);
+  pinMode(pin_amarillo, OUTPUT);
+  pinMode(pin_amarillo, OUTPUT);
+
+  Serial.begin(115200);
+  Serial.println("Hello, ESP32!");
+}
+
+
+void loop() {
+
+est_arriba = digitalRead(pin_arriba); 
+est_abajo = digitalRead(pin_abajo);
+
+switch (estado_actual) {
+
+  case est_verde:
+    // Código a ejecutar en est_pb
+    digitalWrite(pin_verde, HIGH); 
+    digitalWrite(pin_amarillo, LOW); 
+    digitalWrite(pin_rojo, LOW);
+    Serial.print(" VERDE ");
+    //transiciones de estado
+    if(est_arriba==1) {
+      estado_actual=est_amarillo;
+      Serial.print(" Amarillo ");
+      delay(500);
+    }
+    break;
+
+  case est_amarillo:
+    digitalWrite(pin_verde, LOW); 
+    digitalWrite(pin_amarillo, HIGH); 
+    digitalWrite(pin_rojo, LOW);
+    Serial.print(" Amarillo ");
+    //transiciones de estado
+    if(est_arriba==1) {
+      estado_actual=est_rojo;
+      Serial.print(" Rojo ");
+      delay(500);
+    }
+    if(est_abajo==1) {
+      estado_actual=est_verde;
+      delay(500);
+    }
+    break;
+
+  case est_rojo:
+    digitalWrite(pin_verde, LOW); 
+    digitalWrite(pin_amarillo, LOW); 
+    digitalWrite(pin_rojo, HIGH); 
+
+    //transiciones de estado
+    if(est_abajo==1) {
+      estado_actual=est_amarillo;
+      delay(500);
+    }
+    break;
+
+  
+
+    break;
+}
+
+  delay(10); // this speeds up the simulationn
+}
