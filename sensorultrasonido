@@ -1,0 +1,69 @@
+#define TRIG 26
+#define ECHO 25
+#define LLED   18
+#define MLED   19
+#define ALED  21
+
+
+unsigned int level = 0;
+
+void setup() {
+
+  pinMode(LLED,OUTPUT);
+  pinMode(MLED,OUTPUT);
+  pinMode(ALED,OUTPUT);
+  digitalWrite(LLED,HIGH);
+  digitalWrite(MLED,HIGH);
+  digitalWrite(ALED,HIGH);
+
+
+  Serial.begin(115200);
+  pinMode(TRIG
+, OUTPUT);
+  pinMode(ECHO
+, INPUT);
+}
+
+void loop() {
+  // empieza de nuevo a medir:
+  digitalWrite(TRIG
+, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG
+, LOW);
+
+  // lee el resultado :
+  int duration = pulseIn(ECHO
+, HIGH);
+  Serial.print("Distancia en centimetros: ");
+  Serial.println(duration / 58);
+  Serial.print("Distancia en pulgadas: ");
+  Serial.println(duration / 148);
+  
+  level = duration / 58;
+
+  if (level < 100)
+  {
+
+        digitalWrite(LLED,LOW);
+        digitalWrite(ALED,HIGH);
+        digitalWrite(MLED,HIGH);
+
+  }
+  else if ((level > 200) && (level <400))
+  {
+        digitalWrite(LLED,HIGH);
+        digitalWrite(ALED,HIGH);
+        digitalWrite(MLED,LOW);
+
+  }
+  else if (level >= 400 )
+  {
+        digitalWrite(ALED,LOW);
+        digitalWrite(MLED,HIGH);
+        digitalWrite(LLED,HIGH);
+  
+
+  }
+  delay(1000);
+}
