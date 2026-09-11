@@ -1,0 +1,1 @@
+Proyectos universitarios y simulaciones para ESP32 desarrollados en Wokwi. Incluye código fuente (.ino/.cpp), esquemas de circuitos y algoritmos de control para el desarrollo de sistemas embebidos e IoT.
