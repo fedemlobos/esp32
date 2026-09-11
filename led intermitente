@@ -1,0 +1,31 @@
+int led = 33;
+byte pulsante = 32;
+byte stato = LOW;
+
+void waitUntilInputLow(int btn, unsigned t)
+{
+    while(!digitalRead(btn)==LOW){
+	    delay(t);
+    }
+}
+  
+void setup() {
+  Serial.begin(115200);
+  pinMode(led, OUTPUT);
+  pinMode(pulsante, INPUT);
+}
+
+// loop principale
+void loop() {
+	if(digitalRead(pulsante)==HIGH){			
+    stato = !stato;
+		waitUntilInputLow(pulsante,50);			
+	}
+	if (stato) {
+		digitalWrite(led, !digitalRead(led));   	
+	} else {
+		digitalWrite(led, LOW);    
+	}
+	delay(10);
+	//led que se mantiene prendido o apagado
+}
